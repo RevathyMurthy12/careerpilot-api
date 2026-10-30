@@ -2,7 +2,8 @@
 import sqlite3
 
 from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Literal
 
 DATABASE = "careerpilot.db"
 
@@ -39,9 +40,17 @@ create_table()
 
 # Validate incoming application data
 class JobApplication(BaseModel):
-    company: str
-    role: str
-    status: str = "Applied"
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    company: str = Field(min_length=1, max_length=100)
+    role: str = Field(min_length=1, max_length=100)
+    status: Literal[
+        "Applied",
+        "Interview",
+        "Selected",
+        "Rejected",
+        "Withdrawn"
+    ] = "Applied"
 
 
 # READ: Get all applications
