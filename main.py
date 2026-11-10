@@ -5,8 +5,8 @@ import sqlite3
 import psycopg
 from psycopg.rows import dict_row
 from fastapi import FastAPI, HTTPException, status
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Literal
+
+from app.schemas import JobApplication
 
 
 # Database configuration
@@ -76,21 +76,6 @@ def create_table():
 
 
 create_table()
-
-
-# Validate incoming application data
-class JobApplication(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
-
-    company: str = Field(min_length=1, max_length=100)
-    role: str = Field(min_length=1, max_length=100)
-    status: Literal[
-        "Applied",
-        "Interview",
-        "Selected",
-        "Rejected",
-        "Withdrawn"
-    ] = "Applied"
 
 
 # READ: Get all applications
